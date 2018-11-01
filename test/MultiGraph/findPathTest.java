@@ -47,6 +47,7 @@ class findPathTest {
      * start:       !in Nodes, in Nodes
      * destination: !in Nodes, in Nodes
      *
+     * Test for outputs:
      * P = {} (start == destination), P = {} (no path between start & destination),
      * P = {e1}, P = {e1,..,eN}
      *
@@ -123,6 +124,8 @@ class findPathTest {
      */
     @Test
     void multipleEdgePathWithSameLabel() {
+        // See graph1.jpg
+
         Station station2 = new Station(2);
         Station station3 = new Station(3);
         Station station4 = new Station(4);
@@ -154,14 +157,59 @@ class findPathTest {
 
         Deque<Edge> expectedPath3 = new LinkedList<Edge>();
         expectedPath3.addFirst(edge5);
-        expectedPath3.addFirst(edge2);
-        expectedPath3.addFirst(edge1);
+        expectedPath3.addFirst(edge3);
+        expectedPath3.addFirst(edge4);
         expectedPath3.addFirst(edge0);
 
         assertAll("Test various start/destination pairs and compare with expected path",
                 () -> assertEquals(expectedPath1, multigraph.findPath(station5, node0)),
                 () -> assertEquals(expectedPath2, multigraph.findPath(station3, node0)),
                 () -> assertEquals(expectedPath3, multigraph.findPath(node0, station5))
+        );
+    }
+
+    @Test
+    void multipleEdgePathWithSameLabel2() {
+        // See graph2.jpg
+
+        Station station2 = new Station(2);
+        Station station3 = new Station(3);
+        Station station4 = new Station(4);
+
+        Edge edge1 = new Line("Line2", (Station)node1, station2);
+        Edge edge2 = new Line("Line1", (Station)node1, station3);
+        Edge edge3 = new Line("Line2", (Station)node1, station4);
+
+        multigraph.addEdge(edge1);
+        multigraph.addEdge(edge2);
+        multigraph.addEdge(edge3);
+
+        Deque<Edge> expectedPath1 = new LinkedList<Edge>();
+        expectedPath1.addFirst(edge0);
+        expectedPath1.addFirst(edge2);
+
+        Deque<Edge> expectedPath1reverse = new LinkedList<Edge>();
+        expectedPath1reverse.addFirst(edge2);
+        expectedPath1reverse.addFirst(edge0);
+
+        Deque<Edge> expectedPath2 = new LinkedList<Edge>();
+        expectedPath2.addFirst(edge1);
+        expectedPath2.addFirst(edge3);
+
+        Deque<Edge> expectedPath2reverse = new LinkedList<Edge>();
+        expectedPath2reverse.addFirst(edge3);
+        expectedPath2reverse.addFirst(edge1);
+
+        Deque<Edge> switchLine = new LinkedList<Edge>();
+        switchLine.addFirst(edge1);
+        switchLine.addFirst(edge0);
+
+        assertAll("Test various start/destination pairs and compare with expected path",
+                () -> assertEquals(expectedPath1, multigraph.findPath(station3, node0)),
+                () -> assertEquals(expectedPath2, multigraph.findPath(station4, station2)),
+                () -> assertEquals(expectedPath1reverse, multigraph.findPath(node0, station3)),
+                () -> assertEquals(expectedPath2reverse, multigraph.findPath(station2, station4)),
+                () -> assertEquals(switchLine, multigraph.findPath(node0, station2))
         );
     }
 }
