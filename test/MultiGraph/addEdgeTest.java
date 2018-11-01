@@ -9,11 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Chris Brown
- * @version 0.1
- * @since 30/10/2018
- */
 class addEdgeTest {
 
     private IMultiGraph multigraph;
