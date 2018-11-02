@@ -4,10 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,7 +124,6 @@ class findPathTest {
         // See graph1.jpg
 
         // Builds on top of the already-existing multigraph with node0, node1, and edge0 between them.
-//        multigraph = new MultiGraph();
 
         Station station2 = new Station(2);
         Station station3 = new Station(3);
@@ -298,7 +295,6 @@ class findPathTest {
         expectedPath0to1.add(blue0);
 
 
-
         assertAll("Test various start/destination pairs and compare with expected path",
                 () -> assertEquals(expectedPath2to5, multigraph.findPath(station2, station5)),
                 () -> assertEquals(expectedPath0to1, multigraph.findPath(station0, station1)),
@@ -365,12 +361,15 @@ class findPathTest {
         expectedPath0to3.add(blue1);
         expectedPath0to3.add(blue2);
 
+        // Appears to be an issue here, see below test: 'pathBetweenTwoNodesWithSameIdOnUnconnectedSubGraphs' for detail
+        Deque<Edge> expectedEmptyPath = multigraph.findPath(station1, station8);
+        System.out.println(expectedEmptyPath.toString());
 
         assertAll("Test various start/destination pairs and compare with expected path",
                 () -> assertEquals(expectedPath4to5, multigraph.findPath(station4, station5)),
                 () -> assertEquals(expectedPath5to4, multigraph.findPath(station5, station4)),
                 () -> assertEquals(expectedPath0to3, multigraph.findPath(station0, station3)),
-                () -> assertTrue(multigraph.findPath(station1, station8).isEmpty())
+                () -> assertTrue(expectedEmptyPath.isEmpty())
         );
     }
 
@@ -378,6 +377,10 @@ class findPathTest {
      * This test demonstrates an issue whens searching for a path between 2 nodes on unconnected subgraphs where both
      * subgraphs contain a node with the same ID #. Even though the staring node is specified with an object reference
      * the findPath method appears to use a different node (that has the same ID #).
+     *
+     * This seems to relate to findPath's use of equality checks from the Station implementation. Station overrides
+     * equals and hashCode and uses station ID # to compare. If we comment out those overridden methods and use default
+     * equality the problem described above doesn't occur.
      */
     @Test
     void pathBetweenTwoNodesWithSameIdOnUnconnectedSubGraphs() {
