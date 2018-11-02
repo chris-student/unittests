@@ -4,8 +4,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -225,7 +227,7 @@ class findPathTest {
     void multipleEdgePathWithSameLabel3() {
         // See graph3.jpg
 
-//        multigraph = new MultiGraph();
+        multigraph = new MultiGraph();
 
         Station station0 = new Station(0);
         Station station1 = new Station(1);
@@ -299,6 +301,68 @@ class findPathTest {
         assertAll("Test various start/destination pairs and compare with expected path",
                 () -> assertEquals(expectedPath2to5, multigraph.findPath(station2, station5)),
                 () -> assertEquals(expectedPath0to1, multigraph.findPath(station0, station1))
+        );
+    }
+
+    @Test
+    void multipleEdgePathWithSameLabel5() {
+        // See graph3.jpg
+
+        multigraph = new MultiGraph();
+
+        Station station0 = new Station(0);
+        Station station1 = new Station(1);
+        Station station2 = new Station(2);
+        Station station3 = new Station(3);
+        Station station4 = new Station(4);
+        Station station5 = new Station(5);
+        Station station6 = new Station(6);
+        Station station7 = new Station(7);
+        Station station8 = new Station(0);
+        Station station9 = new Station(1);
+
+        Edge blue0 = new Line("Blue", station0, station1);
+        Edge blue1 = new Line("Blue", station1, station2);
+        Edge blue2 = new Line("Blue", station2, station3);
+        Edge red0 = new Line("Red", station4, station1);
+        Edge red1 = new Line("Red", station1, station2);
+        Edge red2 = new Line("Red", station2, station5);
+        Edge extra0 = new Line("Extra", station6, station3);
+        Edge extra1 = new Line("Extra", station3, station7);
+        Edge misc = new Line("Misc", station8, station9);
+
+        multigraph.addEdge(blue0);
+        multigraph.addEdge(blue1);
+        multigraph.addEdge(blue2);
+        multigraph.addEdge(red0);
+        multigraph.addEdge(red1);
+        multigraph.addEdge(red2);
+        multigraph.addEdge(extra0);
+        multigraph.addEdge(extra1);
+        multigraph.addEdge(misc);
+
+        // Expected path from station4 to station5
+        Deque<Edge> expectedPath4to5 = new LinkedList<>();
+        expectedPath4to5.add(red0);
+        expectedPath4to5.add(red1);
+        expectedPath4to5.add(red2);
+
+        Deque<Edge> expectedPath5to4 = new LinkedList<>();
+        expectedPath5to4.add(red2);
+        expectedPath5to4.add(red1);
+        expectedPath5to4.add(red0);
+
+        // Expected path from station0 to station3
+        Deque<Edge> expectedPath0to3 = new LinkedList<>();
+        expectedPath0to3.add(blue0);
+        expectedPath0to3.add(blue1);
+        expectedPath0to3.add(blue2);
+
+
+        assertAll("Test various start/destination pairs and compare with expected path",
+                () -> assertEquals(expectedPath4to5, multigraph.findPath(station4, station5)),
+                () -> assertEquals(expectedPath5to4, multigraph.findPath(station5, station4)),
+                () -> assertEquals(expectedPath0to3, multigraph.findPath(station0, station3))
         );
     }
 }
