@@ -362,7 +362,42 @@ class findPathTest {
         assertAll("Test various start/destination pairs and compare with expected path",
                 () -> assertEquals(expectedPath4to5, multigraph.findPath(station4, station5)),
                 () -> assertEquals(expectedPath5to4, multigraph.findPath(station5, station4)),
-                () -> assertEquals(expectedPath0to3, multigraph.findPath(station0, station3))
+                () -> assertEquals(expectedPath0to3, multigraph.findPath(station0, station3)),
+                () -> assertTrue(multigraph.findPath(station1, station8).isEmpty())
         );
+    }
+
+    @Test
+    void multipleEdgePathWithTwoNodesWithSameId() {
+        // This is the red line from graph3.jpg with an extra edge between 2 nodes which are unconnected to the rest of
+        // the graph. One of the unconnected nodes has the same id number as one of the nodes on the red line segment.
+
+        multigraph = new MultiGraph();
+
+        Station station1 = new Station(0);
+        Station station2 = new Station(2);
+        Station station4 = new Station(4);
+        Station station5 = new Station(5);
+
+        // Separate nodes
+        Station station6 = new Station(0);
+        Station station7 = new Station(1);
+
+        Edge red0 = new Line("Red", station4, station1);
+        Edge red1 = new Line("Red", station1, station2);
+        Edge red2 = new Line("Red", station2, station5);
+
+        // Separate edge
+        Edge unconnected = new Line("Unconnected", station6, station7);
+
+        multigraph.addEdge(red0);
+        multigraph.addEdge(red1);
+        multigraph.addEdge(red2);
+
+        multigraph.addEdge(unconnected);
+
+        // There should be no path between nodes on the red line and unconnected segments.
+        Deque<Edge> path = multigraph.findPath(station1, station7);
+        assertTrue(path.isEmpty(), path.toString());
     }
 }
