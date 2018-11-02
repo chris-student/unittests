@@ -125,6 +125,7 @@ class findPathTest {
     void multipleEdgePathWithSameLabel() {
         // See graph1.jpg
 
+        // Builds on top of the already-existing multigraph with node0, node1, and edge0 between them.
 //        multigraph = new MultiGraph();
 
         Station station2 = new Station(2);
@@ -170,7 +171,7 @@ class findPathTest {
     }
 
     @Test
-    void multipleEdgePathWithSameLabel2() {
+    void multipleEdgePathOnTwoLinesWithOneIntersection() {
         // See graph2.jpg
 
         multigraph = new MultiGraph();
@@ -224,7 +225,7 @@ class findPathTest {
     }
 
     @Test
-    void multipleEdgePathWithSameLabel3() {
+    void multipleEdgePathOnTwoLinesWithTwoIntersectionsAndOneParallelEdge() {
         // See graph3.jpg
 
         multigraph = new MultiGraph();
@@ -270,7 +271,7 @@ class findPathTest {
     }
 
     @Test
-    void multipleEdgePathWithSameLabel4() {
+    void pathsOnTwoSubgraphsWithOneEdgeEach() {
         // 2 unconnected edges
 
         multigraph = new MultiGraph();
@@ -300,12 +301,18 @@ class findPathTest {
 
         assertAll("Test various start/destination pairs and compare with expected path",
                 () -> assertEquals(expectedPath2to5, multigraph.findPath(station2, station5)),
-                () -> assertEquals(expectedPath0to1, multigraph.findPath(station0, station1))
+                () -> assertEquals(expectedPath0to1, multigraph.findPath(station0, station1)),
+                () -> assertTrue(multigraph.findPath(station0, station2).isEmpty()),
+                () -> assertTrue(multigraph.findPath(station1, station5).isEmpty())
         );
     }
 
+    /**
+     * This test uses graph3.jpg with some extra edges added and also duplicates some ID numbers. Provides almost full
+     * coverage on the findPath method (except for {} paths).
+     */
     @Test
-    void multipleEdgePathWithSameLabel5() {
+    void multipleEdgePathOnGraphWithDuplicateNodeIds() {
         // See graph3.jpg
 
         multigraph = new MultiGraph();
@@ -367,8 +374,13 @@ class findPathTest {
         );
     }
 
+    /**
+     * This test demonstrates an issue whens searching for a path between 2 nodes on unconnected subgraphs where both
+     * subgraphs contain a node with the same ID #. Even though the staring node is specified with an object reference
+     * the findPath method appears to use a different node (that has the same ID #).
+     */
     @Test
-    void multipleEdgePathWithTwoNodesWithSameId() {
+    void pathBetweenTwoNodesWithSameIdOnUnconnectedSubGraphs() {
         // This is the red line from graph3.jpg with an extra edge between 2 nodes which are unconnected to the rest of
         // the graph. One of the unconnected nodes has the same id number as one of the nodes on the red line segment.
 
